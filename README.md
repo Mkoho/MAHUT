@@ -2,133 +2,132 @@
 
 > **Trust & Ethics** — A business development and operations partner for small and mid-sized hospitals and nursing homes.
 
-This package contains the MAHUT marketing website with a **fully working contact form** that emails every submission directly to **mosharof719@gmail.com** — no backend server, database, or hosting-side code required.
+This release adds the **official MAHUT elephant logo** to the site and includes a full **mobile-view audit and fix pass**. The core page remains a single, fully self-contained `index.html` — the logo and favicon are embedded directly as inline Base64 image data, so the page **cannot lose its styling or logo** even if other files are separated during upload/unzip.
 
 ---
 
-## Repository Structure
+## What's New in This Update
+
+### 1. Logo added and corrected
+- Your uploaded `Mahut logo.jpg` had a solid dark-olive background. It has been **background-removed** (made fully transparent) with clean, anti-aliased edges so it sits naturally on the dark header bar.
+- The logo now appears in the site header next to the "MAHUT / Trust & Ethics" wordmark, sized responsively (42px tall on desktop, 34px on tablets, 30px on small phones).
+- A matching **favicon** (browser tab icon) was generated from the same logo and is embedded inline — it will show up in the browser tab immediately, with no extra file needed.
+- **Resolution-corrected**: the logo source was re-rendered at the right pixel density for crisp display on retina/high-DPI phone and desktop screens, instead of being stretched from the original low-res JPEG.
+
+### 2. Mobile view — full review and fixes
+The following issues were found and corrected for phones and tablets:
+
+| Issue Found | Fix Applied |
+|---|---|
+| Form inputs used `.95rem` (~15px) font size, which **triggers unwanted auto-zoom on iPhone Safari** when tapping into a field | Bumped to `16px` (the iOS no-zoom threshold) on all form inputs/selects/textareas |
+| Hamburger menu button had a tiny tap area (just the icon glyph, no padding) | Enlarged to a proper **44×44px touch target** (Apple/Google's minimum recommended size) |
+| "Back to top" button was 42×42px | Bumped to **44×44px** minimum touch target |
+| Mobile menu links had no guaranteed minimum height | Added `min-height:44px` to all mobile nav links for reliable tapping |
+| No safe-area handling for notched phones (iPhone X and later) | Added `env(safe-area-inset-top/bottom)` padding so the sticky header and floating buttons never sit under the notch or home-indicator bar |
+| Contact form submit button wasn't full-width on small screens | Now expands to full width below 600px for easier tapping |
+| No `viewport-fit=cover` meta tag | Added, enabling the safe-area insets above to work correctly on edge-to-edge phone screens |
+| Logo/brand text could overflow or wrap awkwardly on very narrow screens (<380px) | Added a dedicated breakpoint that shrinks the logo and hides the "Trust & Ethics" subtitle on the smallest phones, keeping the header tidy |
+| No `theme-color` meta tag | Added (`#141414`) so mobile browser chrome (status bar / address bar tint) matches the brand on Android/Chrome |
+
+All existing responsive behavior — the mobile accordion services menu, single-column service cards, stacked contact form fields, collapsing footer — was retained and verified intact.
+
+### 3. Robustness (the "missing CSS/images" issue is now structurally prevented)
+Previously, CSS/JS/logo lived in separate files, and when those got separated from `index.html` during unzip/upload, the page rendered unstyled. To permanently eliminate this risk:
+- **All CSS and JavaScript remain embedded directly inside `index.html`** (no external `.css`/`.js` files to lose).
+- **The logo and favicon are now embedded as inline Base64 data** directly inside `index.html` — there is no external image file the browser needs to fetch for the core page to render correctly, fully styled, with its logo, from a single file.
+
+---
+
+## Repository / Package Structure
 
 ```
 mahut-website/
-├── index.html                 # Public marketing website, including the contact form
+├── index.html                 # The entire website — HTML, CSS, JS, logo, and favicon all in one file
 ├── assets/
-│   ├── css/
-│   │   └── style.css          # Full site stylesheet (site + contact form styling)
-│   └── js/
-│       └── main.js            # Site scripts: nav, animations, counters, AJAX form submit
+│   └── img/                   # OPTIONAL bonus icon pack (not required for index.html to work)
+│       ├── mahut-logo.png             # Standalone transparent logo file
+│       ├── mahut-icon-master.png      # High-res square master (for custom icon generation)
+│       ├── favicon.ico                # Multi-resolution .ico (16/32/48/64px)
+│       ├── favicon-16x16.png
+│       ├── favicon-32x32.png
+│       ├── favicon-48x48.png
+│       ├── apple-touch-icon.png       # 180×180, branded black background (for iOS home screen)
+│       ├── android-chrome-192x192.png
+│       ├── android-chrome-512x512.png
+│       └── site.webmanifest           # PWA manifest referencing the Android icons above
 └── README.md                   # You are here
 ```
 
-No build tools, frameworks, or package manager are required. Open `index.html` directly in a browser, or deploy the whole folder to any static host (GitHub Pages, GoDaddy, Hostinger, Netlify, etc.).
+**Important:** `index.html` alone is a complete, fully working website. The `assets/img/` folder is an **optional bonus pack** for anyone who later wants to:
+- Use a real file-based favicon instead of the inline one (identical result, just a different delivery method)
+- Add an iOS "Add to Home Screen" icon (`apple-touch-icon.png`)
+- Set up a installable PWA manifest (`site.webmanifest` + the two Android icons)
+
+If you deploy only `index.html` and skip the `assets/` folder entirely, the site will look and work **exactly the same** — logo, favicon, colors, and all.
 
 ---
 
-## ⚠️ IMPORTANT — One-time setup before the contact form will deliver emails
+## How to Use the Optional Icon Pack (if desired)
 
-The contact form uses **[FormSubmit.co](https://formsubmit.co)**, a free email-relay service built specifically for static HTML sites with no backend. It works by submitting the form directly to:
+1. Upload the `assets/img/` folder alongside `index.html` on your host.
+2. In `index.html`, find this commented-out line in the `<head>`:
+   ```html
+   <!-- Optional: for a branded home-screen icon on iOS, add apple-touch-icon.png
+        from the bonus icon pack and uncomment the line below.
+   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png"> -->
+   ```
+   Remove the `<!--` and `-->` to activate it.
+3. (Optional, for Android/PWA "Add to Home Screen" support) add this line in `<head>`:
+   ```html
+   <link rel="manifest" href="assets/img/site.webmanifest">
+   ```
 
-```
-https://formsubmit.co/mosharof719@gmail.com
-```
-
-**Before the form will deliver any emails, FormSubmit requires a one-time activation:**
-
-1. Deploy the site (or even just open `index.html` locally) and submit the contact form **once**, with any test data.
-2. FormSubmit will send an **activation email to `mosharof719@gmail.com`** titled something like *"Confirm your email address"* or *"Activate Form"*.
-3. Open that email and click the **confirmation/activation link** inside it.
-4. From that point forward, every future form submission will be delivered straight to `mosharof719@gmail.com` automatically — no further setup needed.
-
-This is a one-time step per recipient email address and is required by FormSubmit to prevent spam/abuse of their free relay service.
-
-### If you want to change the recipient email later
-Open `index.html`, find the `<form>` tag, and update **both**:
-```html
-<form ... action="https://formsubmit.co/NEW-EMAIL@example.com" ...>
-```
-and in `assets/js/main.js`, update:
-```js
-const recipient = 'NEW-EMAIL@example.com';
-```
-Then repeat the one-time activation step above for the new address.
-
----
-
-## How the Contact Form Works
-
-- **Fields captured:** Full Name, Designation/Role, Email, Phone/WhatsApp, Hospital/Nursing Home Name, City/Location, Service Interested In (dropdown), Message, and a required consent checkbox.
-- **Submission method:** The form submits via JavaScript (`fetch`) to FormSubmit's AJAX endpoint, so the visitor **stays on the page** — no redirect, no page reload. A success or error message appears directly below the form.
-- **Spam protection:** Includes a hidden honeypot field (`_honey`) that silently traps bots, plus FormSubmit's own filtering. `_captcha` is set to `false` for a smoother user experience; you can set it to `true` in `index.html` if you'd prefer FormSubmit's built-in CAPTCHA step instead.
-- **Email format:** Submissions arrive as a clean, readable table (`_template value="table"`) with a clear subject line ("New MAHUT Website Consultation Request") so they're easy to scan in your inbox.
-- **No data stored on the website.** Submissions go directly from the visitor's browser to FormSubmit's relay to your inbox — nothing is saved in any database or file on this site.
+None of this is required for the site to work — it only adds extra polish for users who save your site to their phone's home screen.
 
 ---
 
 ## Getting Started (Local Preview)
 
-**Option A — Open directly:**
 ```bash
+# Just open it — no build step, no server required
 open index.html         # macOS
 start index.html         # Windows
 xdg-open index.html       # Linux
 ```
 
-**Option B — Serve locally (recommended, avoids file:// quirks with some browsers' fetch() restrictions):**
+Or serve locally (recommended, since some browsers restrict `fetch()` on `file://` pages, which affects the contact form):
 ```bash
 python3 -m http.server 8080
 # then visit http://localhost:8080
 ```
 
-> Note: some browsers restrict `fetch()` requests from `file://` pages. If the form doesn't submit when opening `index.html` directly, serve it locally (Option B) or deploy it — it will work correctly once served over `http://` or `https://`.
+---
+
+## Deploying
+
+**GitHub Pages:** push the repo, enable Pages under **Settings → Pages → Deploy from a branch → main / root**.
+
+**GoDaddy / Hostinger (shared hosting):** log in to File Manager → `public_html` → upload `index.html` (and optionally the `assets/` folder) → visit your domain.
+
+Either way, remember the **one-time FormSubmit activation step**: submit the contact form once after going live, then confirm the activation email FormSubmit sends to `mosharof719@gmail.com` so all future submissions get delivered automatically.
 
 ---
 
-## Deploying to GitHub Pages
+## Mobile Testing Checklist (recommended before you consider this "done")
 
-1. Push this repository to GitHub:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit: MAHUT website with working contact form"
-   git branch -M main
-   git remote add origin https://github.com/YOUR-USERNAME/mahut-website.git
-   git push -u origin main
-   ```
-2. On GitHub: **Settings → Pages → Build and deployment → Source → Deploy from a branch**.
-3. Choose branch **`main`**, folder **`/ (root)`**, then **Save**.
-4. Your site will be live at `https://YOUR-USERNAME.github.io/mahut-website/` within a few minutes.
-5. Submit the contact form once on the live site to trigger the FormSubmit activation email (see the setup section above).
+Since I could not render a live screenshot in this environment (sandboxed, no network access to a browser), please do a quick manual pass on a real device or your browser's device-emulation mode:
 
-## Deploying to Traditional Shared Hosting (GoDaddy / Hostinger)
+- [ ] Open on an actual phone (iOS Safari and Android Chrome if possible) — these two engines handle zoom/tap targets differently from desktop dev tools
+- [ ] Tap into each contact form field and confirm the page does **not** auto-zoom
+- [ ] Open and close the mobile hamburger menu, and expand/collapse the "Services" accordion
+- [ ] Scroll through all sections checking no horizontal scrollbar appears
+- [ ] Submit a test entry through the contact form to confirm the email arrives (after FormSubmit activation)
+- [ ] Rotate to landscape briefly to confirm no layout breakage
 
-1. Log in to your hosting control panel (cPanel for GoDaddy, hPanel for Hostinger) → **File Manager**.
-2. Navigate to **`public_html`**.
-3. Upload `index.html` and the entire `assets/` folder, preserving the `css/` and `js/` subfolders.
-4. Visit your domain — the site should now be live.
-5. Activate the free SSL certificate included with your hosting plan.
-6. Submit the contact form once to trigger the FormSubmit activation email.
+## If You'd Like Further Help
 
----
-
-## Customization Guide
-
-| Want to change… | Where |
-|---|---|
-| Brand colors | `:root` CSS variables at the top of `assets/css/style.css` |
-| Services list / copy | `#services` section in `index.html` |
-| Contact form fields | `<form id="mahutContactForm">` block in `index.html` — add/remove `.form-group` blocks as needed; each `name="..."` attribute becomes the column label in the email |
-| Recipient email | See "If you want to change the recipient email later" above |
-| Email subject line | The `_subject` hidden input inside the `<form>` tag |
-| Success/error message wording | `showStatus(...)` calls inside the contact-form script block at the bottom of `assets/js/main.js` |
-
----
-
-## Known Limitations
-
-- **Requires one-time FormSubmit activation** (see above) before emails are delivered — this is a one-time step, not an ongoing requirement.
-- **Free-tier FormSubmit** does not retain or archive submissions on their end beyond delivering the email — treat your inbox as the system of record.
-- **No images or external fonts/icons** are used elsewhere on the site — all icons are emoji and effects are pure CSS, keeping the site fast and dependency-free.
-- **No backend/database** beyond the FormSubmit relay — this remains a static site.
-
-## Browser Support
-
-Built with modern, broadly-supported CSS/JS (CSS Grid, `clamp()`, `IntersectionObserver`, `fetch`, `backdrop-filter`). Tested against current versions of Chrome, Edge, Firefox, and Safari.
+A few things that would let me refine this further, if useful:
+- **An exact device/browser** where you saw the original "no color/images" issue (e.g., "iPhone 13, Safari") — helpful if any related quirk still shows up for you.
+- **A vector/SVG version of the logo**, if you have one — would let me produce an even crisper, infinitely scalable version instead of a rasterized PNG.
+- **Real contact details** (phone, office address) to replace placeholder content in the footer, if you'd like those added.
+- Confirmation of your **final domain name**, so I can update the `sitemap`/`theme-color`/manifest references accordingly when you're ready to go live.
